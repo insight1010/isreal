@@ -19,6 +19,7 @@
             --spacing-lg: 36px;
             --border-radius: 16px;
             --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --header-height: 90px;
         }
 
         * {
@@ -65,6 +66,7 @@
         header.header-hidden {
             transform: translateY(-100%);
             box-shadow: none;
+            transition: transform 0.25s ease, box-shadow 0.2s ease;
         }
 
         .header-content {
@@ -161,7 +163,8 @@
             display: flex;
             flex-direction: column;
             gap: var(--spacing-lg);
-            padding: var(--spacing-lg) 0;
+            padding: var(--spacing-md) 0;
+            padding-top: var(--spacing-lg);
         }
 
         .welcome {
@@ -581,12 +584,17 @@
             
             /* Стили для скрытия шапки при скролле в Telegram Mini App */
             body.telegram-app header {
-                transition: transform 0.3s ease, padding 0.3s ease, background 0.3s ease;
+                transition: transform 0.25s ease, padding 0.25s ease, background 0.25s ease;
             }
             
-            /* Добавляем дополнительный отступ сверху для компенсации скрытой шапки */
+            /* Обновляем высоту шапки для мобильной версии */
+            body.telegram-app {
+                --header-height: 110px;
+            }
+            
+            /* Отступ для контента, учитывающий высоту шапки */
             body.telegram-app main {
-                padding-top: calc(var(--spacing-lg) + 60px);
+                padding-top: var(--spacing-md);
             }
         }
     </style>
@@ -883,17 +891,20 @@
             const header = document.querySelector('header');
             const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
             
+            // Определение, скроллим ли мы вниз или вверх
+            const isScrollingDown = currentScroll > lastScrollTop;
+            
             // Если скроллим вниз и прокрутили больше 100px - скрываем шапку
-            if (currentScroll > lastScrollTop && currentScroll > 100) {
+            if (isScrollingDown && currentScroll > 100) {
                 header.classList.add('header-hidden');
             } 
-            // Если скроллим вверх - показываем шапку
-            else if (currentScroll < lastScrollTop) {
+            // Если скроллим вверх И уже прокрутили некоторое расстояние - показываем шапку
+            else if (!isScrollingDown && currentScroll > 50) {
                 header.classList.remove('header-hidden');
             }
             
-            // Если доскроллили до верха страницы - удаляем все классы состояния
-            if (currentScroll <= 0) {
+            // Если доскроллили до самого верха страницы - удаляем все классы состояния
+            if (currentScroll <= 10) {
                 header.classList.remove('scrolled');
                 header.classList.remove('header-hidden');
             } 
@@ -902,7 +913,8 @@
                 header.classList.add('scrolled');
             }
             
-            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Запоминаем текущую позицию скролла
+            // Запоминаем текущую позицию скролла
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
         }
         
         // Проверяем, открыто ли приложение в Telegram Mini App
