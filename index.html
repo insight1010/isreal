@@ -62,6 +62,11 @@
             background: rgba(0, 0, 0, 0.9);
         }
 
+        header.header-hidden {
+            transform: translateY(-100%);
+            box-shadow: none;
+        }
+
         .header-content {
             display: flex;
             justify-content: space-between;
@@ -573,6 +578,16 @@
             .telegram-app footer {
                 display: none;
             }
+            
+            /* Стили для скрытия шапки при скролле в Telegram Mini App */
+            body.telegram-app header {
+                transition: transform 0.3s ease, padding 0.3s ease, background 0.3s ease;
+            }
+            
+            /* Добавляем дополнительный отступ сверху для компенсации скрытой шапки */
+            body.telegram-app main {
+                padding-top: calc(var(--spacing-lg) + 60px);
+            }
         }
     </style>
 </head>
@@ -861,11 +876,42 @@
         // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
         let isTelegramWebApp = false;
+        let lastScrollTop = 0;
+        
+        // Функция для управления видимостью шапки при скролле
+        function handleHeaderVisibility() {
+            const header = document.querySelector('header');
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Если скроллим вниз и прокрутили больше 100px - скрываем шапку
+            if (currentScroll > lastScrollTop && currentScroll > 100) {
+                header.classList.add('header-hidden');
+            } 
+            // Если скроллим вверх - показываем шапку
+            else if (currentScroll < lastScrollTop) {
+                header.classList.remove('header-hidden');
+            }
+            
+            // Если доскроллили до верха страницы - удаляем все классы состояния
+            if (currentScroll <= 0) {
+                header.classList.remove('scrolled');
+                header.classList.remove('header-hidden');
+            } 
+            // Если прокрутили хотя бы немного вниз - добавляем класс scrolled
+            else if (currentScroll > 30) {
+                header.classList.add('scrolled');
+            }
+            
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll; // Запоминаем текущую позицию скролла
+        }
         
         // Проверяем, открыто ли приложение в Telegram Mini App
         if (window.Telegram && window.Telegram.WebApp) {
             isTelegramWebApp = true;
             document.body.classList.add('telegram-app');
+            
+            // Добавляем обработчик события скролла для управления видимостью шапки
+            window.addEventListener('scroll', handleHeaderVisibility, { passive: true });
             
             // Показываем основное приложение после загрузки
             tg.ready();
