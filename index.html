@@ -266,6 +266,16 @@
         .step-content.active {
             display: block;
         }
+        
+        /* Добавим более явные стили для видимости контента шагов */
+        #step-1, #step-2, #step-3, #step-4, #step-5, #step-6, #step-7, #step-8 {
+            display: none;
+        }
+        
+        #step-1.active, #step-2.active, #step-3.active, #step-4.active, 
+        #step-5.active, #step-6.active, #step-7.active, #step-8.active {
+            display: block !important;
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -596,6 +606,28 @@
             body.telegram-app main {
                 padding-top: var(--spacing-md);
             }
+        }
+
+        /* Дополнительные стили для обеспечения видимости контента в Telegram Mini App */
+        .card {
+            background: rgba(37, 37, 41, 0.7);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: block;
+            visibility: visible !important;
+        }
+        
+        /* Стили для Telegram Mini App - принудительная видимость контента */
+        body.telegram-app .step-content.active {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body.telegram-app .card {
+            background: rgba(37, 37, 41, 0.85);
         }
     </style>
 </head>
@@ -985,18 +1017,73 @@
         const steps = document.querySelectorAll('.step');
         const stepContents = document.querySelectorAll('.step-content');
         
+        // Функция для активации шага по номеру
+        function activateStep(stepNumber) {
+            console.log('Активируем шаг:', stepNumber);
+            
+            // Удаляем активный класс у всех шагов
+            steps.forEach(s => s.classList.remove('active'));
+            stepContents.forEach(c => c.classList.remove('active'));
+            
+            // Добавляем активный класс к текущему шагу в навигации
+            const targetStep = document.querySelector(`.step[data-step="${stepNumber}"]`);
+            if (targetStep) {
+                targetStep.classList.add('active');
+            }
+            
+            // Активируем содержимое текущего шага
+            const targetContent = document.getElementById(`step-${stepNumber}`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                console.log('Активирован контент:', targetContent);
+            } else {
+                console.error('Не найден контент для шага:', stepNumber);
+            }
+        }
+        
+        // Обработчики для кнопок навигации между шагами
         steps.forEach(step => {
             step.addEventListener('click', () => {
                 const stepNumber = step.dataset.step;
-                
-                // Удаляем активный класс у всех шагов
-                steps.forEach(s => s.classList.remove('active'));
-                stepContents.forEach(c => c.classList.remove('active'));
-                
-                // Добавляем активный класс к текущему шагу
-                step.classList.add('active');
-                document.querySelector(`.step-content[data-step="${stepNumber}"]`)?.classList.add('active');
+                activateStep(stepNumber);
             });
+        });
+        
+        // Обработчики для кнопок "Далее" и "Назад"
+        document.querySelectorAll('.next-step').forEach(button => {
+            button.addEventListener('click', () => {
+                const nextStep = button.dataset.next;
+                if (nextStep) {
+                    activateStep(nextStep);
+                }
+            });
+        });
+        
+        document.querySelectorAll('.prev-step').forEach(button => {
+            button.addEventListener('click', () => {
+                const prevStep = button.dataset.prev;
+                if (prevStep) {
+                    activateStep(prevStep);
+                }
+            });
+        });
+        
+        // Проверяем и активируем первый шаг при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Активируем первый шаг по умолчанию
+            activateStep('1');
+            
+            if (isTelegramWebApp) {
+                // В режиме Telegram дополнительно форсируем видимость активного шага
+                setTimeout(() => {
+                    const activeContent = document.querySelector('.step-content.active');
+                    if (activeContent) {
+                        activeContent.style.display = 'block';
+                        activeContent.style.opacity = '1';
+                        activeContent.style.visibility = 'visible';
+                    }
+                }, 100);
+            }
         });
     </script>
 </body>
