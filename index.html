@@ -2,980 +2,374 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Is real — Social game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IS REAL — Игра, которая взламывает реальность</title>
     <link href="https://fonts.googleapis.com/css2?family=Jura:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-bg: #000000;
-            --accent-red: rgba(255, 0, 0, 0.8);
-            --accent-blue: rgba(0, 0, 255, 0.8);
-            --neon-glow: rgba(138, 86, 255, 0.7);
-            --text-primary: rgba(255, 255, 255, 0.9);
-            --text-secondary: rgba(255, 255, 255, 0.65);
-            --spacing-sm: 12px;
-            --spacing-md: 24px;
-            --spacing-lg: 36px;
-            --border-radius: 16px;
-            --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --header-height: 90px;
-        }
-
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(to bottom, #000000 0%, #000000 60%, #1a0a38 85%, #3b0f87 100%);
-            color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-md);
-        }
-
-        header {
-            padding: var(--spacing-md) 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            border-bottom: 1px solid rgba(138, 86, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        header.scrolled {
-            padding: var(--spacing-sm) 0;
-            background: rgba(0, 0, 0, 0.9);
-        }
-
-        header.header-hidden {
-            transform: translateY(-100%);
-            box-shadow: none;
-            transition: transform 0.25s ease, box-shadow 0.2s ease;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-tagline {
-            font-family: 'Jura', sans-serif;
-            font-size: 29px;
+            background: #000;
             color: #e0ccff;
-            text-align: center;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(224, 204, 255, 0.3);
-        }
-
-        .logo-container {
+            font-family: 'Jura', Arial, sans-serif;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+        }
+        .header {
+            width: 100%;
+            padding: 32px 0 0 0;
+            display: flex;
+            justify-content: center;
             align-items: center;
         }
-
         .logo {
-            font-family: 'Jura', sans-serif;
-            font-size: 48px;
-            font-weight: 600;
-            color: white;
-            text-shadow: 
-                0 0 10px var(--neon-glow),
-                0 0 20px var(--neon-glow),
-                0 0 30px var(--neon-glow),
-                2px 0 1px var(--accent-red),
-                -2px 0 1px var(--accent-blue);
-            letter-spacing: 2px;
-            text-transform: lowercase;
-            white-space: nowrap;
-        }
-        
-        .logo-subtitle {
-            font-family: 'Jura', sans-serif;
-            font-size: 24px;
-            font-weight: 400;
-            margin-top: 5px;
-            color: white;
-            text-shadow: 
-                0 0 8px var(--neon-glow),
-                0 0 15px var(--neon-glow),
-                1px 0 1px var(--accent-red),
-                -1px 0 1px var(--accent-blue);
-            letter-spacing: 3px;
-            text-transform: lowercase;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: var(--spacing-sm);
-        }
-
-        button {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--text-primary);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        button.primary {
-            background: linear-gradient(to right, #8a56ff, #6039c8);
-            box-shadow: 0 0 15px rgba(138, 86, 255, 0.5);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        button.primary:hover {
-            background: linear-gradient(to right, #9f6aff, #8a56ff);
-            box-shadow: 0 0 20px rgba(138, 86, 255, 0.7);
-        }
-
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-lg);
-            padding: var(--spacing-md) 0;
-            padding-top: var(--spacing-lg);
-        }
-
-        .welcome {
-            text-align: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .welcome h1 {
             font-size: 48px;
             font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: var(--spacing-md);
-            background: linear-gradient(to right, #fff, #b396ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .welcome p {
-            font-size: 20px;
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .game-container {
-            background: var(--secondary-bg);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-light);
-            padding: var(--spacing-md);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .game-title {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .game-steps {
-            display: flex;
-            overflow-x: auto;
-            gap: var(--spacing-sm);
-            padding-bottom: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent) var(--card-bg);
-        }
-
-        .game-steps::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .game-steps::-webkit-scrollbar-track {
-            background: var(--card-bg);
-            border-radius: 10px;
-        }
-
-        .game-steps::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 10px;
-        }
-
-        .step {
-            flex: 0 0 auto;
-            padding: 12px 20px;
-            background: var(--card-bg);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            min-width: 180px;
-            text-align: center;
-        }
-
-        .step.active {
-            background: linear-gradient(135deg, rgba(138, 86, 255, 0.2), rgba(101, 49, 219, 0.2));
-            color: var(--text-primary);
-            border: 1px solid rgba(138, 86, 255, 0.3);
-            box-shadow: 0 4px 16px rgba(82, 51, 151, 0.2);
-        }
-
-        .step-content {
-            display: none;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .step-content.active {
-            display: block;
-        }
-        
-        /* Добавим более явные стили для видимости контента шагов */
-        #step-1, #step-2, #step-3, #step-4, #step-5, #step-6, #step-7, #step-8 {
-            display: none;
-        }
-        
-        #step-1.active, #step-2.active, #step-3.active, #step-4.active, 
-        #step-5.active, #step-6.active, #step-7.active, #step-8.active {
-            display: block !important;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .card h3 {
-            font-size: 20px;
-            margin-bottom: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card h3 span {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            border-radius: 50%;
-            font-size: 16px;
-        }
-
-        .card p {
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-md);
-            line-height: 1.6;
-        }
-
-        .input-group {
-            margin-bottom: var(--spacing-md);
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        textarea, input[type="text"] {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 12px 16px;
-            color: var(--text-primary);
-            font-size: 16px;
-            resize: vertical;
-            min-height: 100px;
-            transition: all 0.2s ease;
-        }
-
-        input[type="text"] {
-            min-height: unset;
-        }
-
-        textarea:focus, input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(138, 86, 255, 0.3);
-        }
-
-        .example {
-            background: rgba(138, 86, 255, 0.1);
-            border-radius: 8px;
-            padding: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-            font-size: 14px;
-        }
-
-        .example-title {
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--spacing-md);
-        }
-
-        .players-list {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-md);
-            margin-top: var(--spacing-md);
-        }
-
-        .player {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm) 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .player:last-child {
-            border-bottom: none;
-        }
-
-        .player-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--accent-dark), var(--accent));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-        }
-
-        .player-info {
-            flex: 1;
-        }
-
-        .player-name {
-            font-weight: 500;
-        }
-
-        .player-role {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .player-status {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #4CAF50;
-        }
-
-        .glassmorphism {
-            background: rgba(37, 37, 41, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-        }
-
-        .loker-formula {
-            font-weight: 500;
-            background: linear-gradient(to right, #fff, #d6c6ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: var(--spacing-sm) 0;
-            font-size: 18px;
-        }
-
-        .why-chain {
-            margin-left: var(--spacing-sm);
-            border-left: 2px solid var(--accent);
-            padding-left: var(--spacing-md);
-        }
-
-        .why-item {
-            margin-bottom: var(--spacing-sm);
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 16px #a084ff, 0 0 32px #a084ff;
             position: relative;
         }
-
-        .why-item:before {
-            content: "";
+        .logo::after {
+            content: "social game";
             position: absolute;
-            left: -25px;
-            top: 10px;
-            width: 10px;
-            height: 2px;
-            background: var(--accent);
-        }
-
-        footer {
-            margin-top: auto;
-            padding: var(--spacing-md) 0;
-            text-align: center;
-            color: var(--text-secondary);
+            bottom: -20px;
+            right: 0;
             font-size: 14px;
+            color: #a084ff;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .main-offer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            padding: 0 20px;
+        }
+        .offer-title {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 0 16px #a084ff, 0 0 32px #a084ff;
+            line-height: 1.2;
+            max-width: 800px;
+        }
+        .offer-subtitle {
+            font-size: 24px;
+            color: #a084ff;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 1.5px;
+            font-weight: 300;
+        }
+        .offer-desc {
+            font-size: 20px;
+            color: #e0ccff;
+            margin-bottom: 40px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .buttons {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .btn {
+            padding: 18px 42px;
+            font-size: 20px;
+            border-radius: 16px;
+            border: none;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-how {
+            background: transparent;
+            color: #a084ff;
+            border: 2px solid #a084ff;
+        }
+        .btn-how:hover {
+            background: #a084ff22;
+            box-shadow: 0 0 16px #a084ff44;
+        }
+        .btn-main {
+            background: linear-gradient(90deg, #a084ff 0%, #7f5cff 100%);
+            color: #fff;
+            box-shadow: 0 0 24px #a084ff99;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-main:hover {
+            background: linear-gradient(90deg, #bca6ff 0%, #a084ff 100%);
+            box-shadow: 0 0 32px #a084ff;
+            transform: translateY(-2px);
+        }
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
+        /* Стили модального окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #0a0815;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 800px;
+            width: 90%;
+            border: 1px solid #2a1f4d;
+            box-shadow: 0 0 40px #a084ff33;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #2a1f4d;
+            padding-bottom: 16px;
+        }
+        .modal-header h2 {
+            color: #fff;
+            font-size: 28px;
+            margin: 0;
+            text-shadow: 0 0 16px #a084ff;
+        }
+        .modal-close {
+            color: #a084ff;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+            padding: 0 12px;
+        }
+        .modal-close:hover {
+            color: #fff;
+            text-shadow: 0 0 16px #a084ff;
+        }
+        .game-section {
+            margin-bottom: 32px;
+            padding: 16px;
+            background: #110d1f;
+            border-radius: 12px;
+        }
+        .game-section h3 {
+            color: #a084ff;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .concept-card {
+            background: #1a162b;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #2a1f4d;
+        }
+        .concept-title {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .concept-desc {
+            color: #c0b0ff;
+            font-size: 14px;
+            line-height: 1.4;
+        }
         @media (max-width: 768px) {
-            .welcome h1 {
-                font-size: 36px;
-            }
-
-            .welcome p {
-                font-size: 18px;
-            }
-
-            .game-steps {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-            }
-
-            .step {
-                min-width: 140px;
-            }
+            .logo { font-size: 36px; }
+            .logo::after { font-size: 12px; bottom: -16px; }
+            .offer-title { font-size: 32px; }
+            .offer-subtitle { font-size: 18px; }
+            .offer-desc { font-size: 16px; }
+            .btn { font-size: 16px; padding: 14px 28px; }
+            .buttons { flex-direction: column; align-items: center; }
         }
-
-        /* Адаптация для Telegram Mini App */
-        @media (max-width: 480px) {
-            :root {
-                --spacing-sm: 8px;
-                --spacing-md: 16px;
-                --spacing-lg: 24px;
-                --border-radius: 12px;
-            }
-            
-            .container {
-                padding: var(--spacing-sm);
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-            
-            .header-tagline {
-                position: relative;
-                left: 0;
-                transform: none;
-                margin-top: var(--spacing-sm);
-                font-size: 18px;
-            }
-            
-            .logo {
-                font-size: 36px;
-            }
-            
-            .logo-subtitle {
-                font-size: 18px;
-            }
-            
-            .nav-buttons {
-                display: none; /* Скрываем нативные кнопки в мини-аппе, используя вместо них кнопки Telegram */
-            }
-            
-            /* Показываем кнопки только в веб-версии */
-            body:not(.telegram-app) .nav-buttons {
-                display: flex;
-                width: 100%;
-                justify-content: center;
-                margin-top: var(--spacing-sm);
-            }
-            
-            body:not(.telegram-app) .nav-buttons button {
-                flex: 1;
-            }
-            
-            .welcome h1 {
-                font-size: 28px;
-            }
-            
-            .welcome p {
-                font-size: 16px;
-            }
-            
-            .game-title {
-                font-size: 20px;
-            }
-            
-            .session-info {
-                font-size: 14px;
-            }
-            
-            .step {
-                min-width: 120px;
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-            
-            .card h3 {
-                font-size: 18px;
-            }
-            
-            /* Стили для темного и светлого режимов Telegram */
-            .dark-theme {
-                --primary-bg: #000000;
-                --text-primary: rgba(255, 255, 255, 0.9);
-                --text-secondary: rgba(255, 255, 255, 0.65);
-            }
-            
-            .light-theme {
-                --primary-bg: #f0f0f0;
-                --text-primary: rgba(0, 0, 0, 0.9);
-                --text-secondary: rgba(0, 0, 0, 0.65);
-                background: linear-gradient(to bottom, #f0f0f0 0%, #f0f0f0 60%, #e8e0f5 85%, #d8c6ff 100%);
-            }
-            
-            .light-theme .glassmorphism {
-                background: rgba(255, 255, 255, 0.7);
-                border: 1px solid rgba(138, 86, 255, 0.2);
-            }
-            
-            /* Установка безопасной области для интерфейса Telegram */
-            body.telegram-app {
-                padding-bottom: env(safe-area-inset-bottom);
-                padding-top: env(safe-area-inset-top);
-            }
-            
-            /* Скрытие ненужных элементов в мини-аппе */
-            .telegram-app footer {
-                display: none;
-            }
-            
-            /* Стили для скрытия шапки при скролле в Telegram Mini App */
-            body.telegram-app header {
-                transition: transform 0.25s ease, padding 0.25s ease, background 0.25s ease;
-            }
-            
-            /* Обновляем высоту шапки для мобильной версии */
-            body.telegram-app {
-                --header-height: 110px;
-            }
-            
-            /* Отступ для контента, учитывающий высоту шапки */
-            body.telegram-app main {
-                padding-top: var(--spacing-md);
-            }
+        /* Анимации */
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
-
-        /* Дополнительные стили для обеспечения видимости контента в Telegram Mini App */
-        .card {
-            background: rgba(37, 37, 41, 0.7);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: block;
-            visibility: visible !important;
-        }
-        
-        /* Стили для Telegram Mini App - принудительная видимость контента */
-        body.telegram-app .step-content.active {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-        }
-        
-        body.telegram-app .card {
-            background: rgba(37, 37, 41, 0.85);
+        .pulse {
+            animation: pulse 3s infinite ease-in-out;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
-            <div class="logo-container">
-                <div class="logo">[Is real]</div>
-                <div class="logo-subtitle">social game</div>
-            </div>
-            <div class="header-tagline">Всем проблемам инсайт</div>
-            <div class="nav-buttons">
-                <button>Как играть</button>
-                <button class="primary">Создать сессию</button>
-            </div>
+    <div class="particles" id="particles"></div>
+    
+    <div class="header">
+        <div class="logo">IS REAL</div>
+    </div>
+    
+    <div class="main-offer">
+        <h1 class="offer-title">Решай реальные проблемы,<br>получая кайф</h1>
+        
+        <div class="offer-desc">
+            <span class="pulse">✨</span> Коллективный разум  команды против любой проблемы.<br>
+            <span class="pulse">🚀</span> Игра, которая превращает мозговой штурм в синергию.<br>
+            <span class="pulse">💡</span> Инсайты, которые вы найдёте не знает даже chat GPT.
         </div>
-    </header>
+        
+        <div class="buttons">
+            <a href="index.html" class="btn btn-main">Начать игру</a>
+            <button class="btn btn-how" onclick="openModal()">КАК ЭТО РАБОТАЕТ</button>
+        </div>
+    </div>
 
-    <main class="container">
-        <section class="game-container glassmorphism">
-            <div class="game-header">
-                <div class="game-title">Сессия: Поиск инсайтов команды</div>
-                <div class="session-info">Участников: 5 • Этап: 1/5</div>
+    <!-- Модальное окно -->
+    <div id="gameModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Правила игры «Это реально / Is Real»</h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
             </div>
+            <div class="modal-body">
+                <div class="game-section">
+                    <h3>Формат игры</h3>
+                    <ul>
+                        <li>Групповая ролевая игра</li>
+                        <li>Основана на внутренних конфликтах и реальных жизненных действиях</li>
+                        <li>Длительность: 1–2 часа</li>
+                        <li>Уровень сложности: средний</li>
+                        <li>Участники: 4-12 человек + ведущий</li>
+                    </ul>
+                </div>
 
-            <div class="game-steps">
-                <div class="step active" data-step="1">1️⃣ Определи проблему</div>
-                <div class="step" data-step="2">2️⃣ Выдели конфликт</div>
-                <div class="step" data-step="3">3️⃣ Оформи локер</div>
-                <div class="step" data-step="4">4️⃣ Копай глубже</div>
-                <div class="step" data-step="5">5️⃣ Переверни локер</div>
-                <div class="step" data-step="6">🌀 Сформулируй ИКР</div>
-                <div class="step" data-step="7">🔍 Поиск аналогий</div>
-                <div class="step" data-step="8">💡 Финальные инсайты</div>
-            </div>
+                <div class="game-section">
+                    <h3>Этапы игры</h3>
+                    <ol>
+                        <li>Вход в игру — формулировка реальной задачи</li>
+                        <li>Выявление локера — внутреннего стопора</li>
+                        <li>Поиск инсайта через коллективный разум</li>
+                        <li>Совершение реального действия</li>
+                    </ol>
+                </div>
 
-            <!-- Шаг 1 -->
-            <div class="step-content active" id="step-1">
-                <div class="card">
-                    <h3><span>1</span> Определи, что бесит — факты, а не мнения</h3>
-                    <p>Опишите проблему с помощью конкретных фактов, а не мнений или предположений. Например, не «система неэффективна», а «клиенты уходят, потому что поддержка отвечает медленно».</p>
-                    
-                    <div class="example">
-                        <div class="example-title">Пример:</div>
-                        <div>❌ Мне кажется, наша система неэффективна</div>
-                        <div>✅ Мы теряем 30% клиентов после первого обращения в техподдержку</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Опишите вашу проблему фактами:</label>
-                        <textarea placeholder="Мы теряем... / У нас происходит... / Данные показывают..."></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <div></div>
-                    <button class="primary next-step" data-next="2">Далее: Выделить конфликт →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 2 -->
-            <div class="step-content" id="step-2">
-                <div class="card">
-                    <h3><span>2</span> Выдели два конфликтующих фактора</h3>
-                    <p>Определите, что хотите улучшить и что из-за этого страдает. Найдите основное противоречие в проблеме.</p>
-                    
-                    <div class="input-group">
-                        <label>Что хотите улучшить?</label>
-                        <input type="text" placeholder="Например: скорость строительства">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Что из-за этого страдает?</label>
-                        <input type="text" placeholder="Например: качество, т.к. бригады работают в аврале">
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="1">← Назад</button>
-                    <button class="primary next-step" data-next="3">Далее: Оформить локер →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 3 -->
-            <div class="step-content" id="step-3">
-                <div class="card">
-                    <h3><span>3</span> Оформи это как локер</h3>
-                    <p>Используйте формулу для структурирования противоречия:</p>
-                    
-                    <div class="loker-formula">«Если мы [делаем Хорошее], то [происходит Плохое], потому что [причина]»</div>
-                    
-                    <div class="example">
-                        <div class="example-title">Примеры из практики:</div>
-                        <div>• Подряд: «Если берём больше заказов (чтобы увеличить прибыль), то срываем сроки, потому что бригады перегружены»</div>
-                        <div>• Ремонты: «Если используем дешёвые материалы (чтобы снизить цену для клиента), получаем рекламации, потому что краска трескается через месяц»</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Ваш локер:</label>
-                        <textarea placeholder="Если мы... то... потому что..."></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="2">← Назад</button>
-                    <button class="primary next-step" data-next="4">Далее: Копать глубже →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 4 -->
-            <div class="step-content" id="step-4">
-                <div class="card">
-                    <h3><span>4</span> Копай глубже — спрашивай «Почему?» 5 раз</h3>
-                    <p>Углубитесь в причины проблемы, чтобы обнаружить корень. Задайте вопрос «Почему?» минимум 5 раз.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">Пример:</div>
-                        <div class="why-chain">
-                            <div class="why-item">Почему срываются сроки? → Мало рабочих.</div>
-                            <div class="why-item">Почему не нанимаем больше? → Нет проверенных кадров.</div>
-                            <div class="why-item">Почему нет кадров? → Текучка, платим меньше рынка.</div>
-                            <div class="why-item">Почему платим меньше рынка? → Высокие накладные расходы.</div>
-                            <div class="why-item">Почему высокие накладные расходы? → Неэффективные процессы управления.</div>
-                            <div>Вывод: Корень проблемы — неэффективные процессы управления, а не «плохие рабочие».</div>
+                <div class="game-section">
+                    <h3>Ключевые понятия</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">Локер</div>
+                            <div class="concept-desc">Противоречие: конфликтующая пара, лень</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Инсайт</div>
+                            <div class="concept-desc">Неочевидное решение, оригинальный взгляд</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Потенциал</div>
+                            <div class="concept-desc">Реализация инсайта, благодарность за проблему</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">Действие</div>
+                            <div class="concept-desc">Конкретный шаг для проверки инсайта</div>
                         </div>
                     </div>
-                    
-                    <div class="input-group">
-                        <label>Почему #1:</label>
-                        <input type="text" placeholder="Почему возникает проблема?">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Почему #2:</label>
-                        <input type="text" placeholder="Почему возникает причина #1?">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Почему #3:</label>
-                        <input type="text" placeholder="Почему возникает причина #2?">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Почему #4:</label>
-                        <input type="text" placeholder="Почему возникает причина #3?">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Почему #5:</label>
-                        <input type="text" placeholder="Почему возникает причина #4?">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Корень проблемы (вывод):</label>
-                        <textarea placeholder="Настоящая причина..."></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="3">← Назад</button>
-                    <button class="primary next-step" data-next="5">Далее: Перевернуть локер →</button>
                 </div>
             </div>
-
-            <!-- Шаг 5 -->
-            <div class="step-content" id="step-5">
-                <div class="card">
-                    <h3><span>5</span> Переверни локер</h3>
-                    <p>Попробуйте сформулировать противоречие с обратной стороны, чтобы увидеть всю картину целиком.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">Пример:</div>
-                        <div>Исходный локер: «Если берём больше заказов, то срываем сроки, потому что бригады перегружены»</div>
-                        <div>Перевернутый: «Если повысим зарплаты (чтобы удержать рабочих), то себестоимость вырастет и цены для клиентов станут неконкурентными»</div>
-                        <div>Главное противоречие: «Нужно удерживать кадры, но без удорожания услуг»</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Перевернутый локер:</label>
-                        <textarea placeholder="Если мы... то... потому что..."></textarea>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Главное противоречие:</label>
-                        <input type="text" placeholder="Нужно X, но без Y">
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="4">← Назад</button>
-                    <button class="primary next-step" data-next="6">Далее: ИКР →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 6 - ИКР -->
-            <div class="step-content" id="step-6">
-                <div class="card">
-                    <h3><span>6</span> ИКР — это не магия, а хак реальности</h3>
-                    <p>Представьте, что проблема уже исчезла сама. Как это могло бы произойти? Сформулируйте идеальный конечный результат.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">Примеры из стройки:</div>
-                        <div>• ИКР для срывов сроков: «Стройка завершается вовремя сама, без авралов и переработок»</div>
-                        <div>• ИКР для брака: «Стены получаются идеально ровными без ручного выравнивания»</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Жёстко обозначьте проблему:</label>
-                        <input type="text" placeholder="Например: Бригады косячат — переделки съедают прибыль">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Ваш ИКР-вопрос (по формуле):</label>
-                        <textarea placeholder="Как сделать, чтобы [проблема] исчезла сама, при этом не тратя ресурсы на [...]?"></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="5">← Назад</button>
-                    <button class="primary next-step" data-next="7">Далее: Поиск аналогий →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 7 - Поиск аналогий -->
-            <div class="step-content" id="step-7">
-                <div class="card">
-                    <h3><span>7</span> Доведи до абсурда и ищи аналогии</h3>
-                    <p>Придумайте "невозможные" на первый взгляд решения, а затем ищите реальные способы их воплотить.</p>
-                    
-                    <div class="example">
-                        <div class="example-title">Приёмы:</div>
-                        <div>• «Материалы сами становятся правильными» → например, самонивелирующаяся стяжка.</div>
-                        <div>• «Ошибки невозможно сделать» → шаблоны для разметки, которые физически не дают ошибиться.</div>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Абсурдные идеи (доведите до крайности):</label>
-                        <textarea placeholder="Например: Стены сами себя выравнивают..."></textarea>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Поиск аналогий вне вашей сферы:</label>
-                        <textarea placeholder="Как эту проблему решают в других областях? Например, в IT/логистике/природе..."></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="6">← Назад</button>
-                    <button class="primary next-step" data-next="8">Далее: Финальные инсайты →</button>
-                </div>
-            </div>
-
-            <!-- Шаг 8 - Финальные инсайты -->
-            <div class="step-content" id="step-8">
-                <div class="card">
-                    <h3><span>8</span> Финальные инсайты и решения</h3>
-                    <p>Соберите все ваши находки и сформулируйте конкретные действия, которые можно предпринять.</p>
-                    
-                    <div class="input-group">
-                        <label>Ключевые инсайты:</label>
-                        <textarea placeholder="Мы поняли, что..."></textarea>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Практические решения:</label>
-                        <textarea placeholder="1. Внедрить...\n2. Изменить...\n3. Разработать..."></textarea>
-                    </div>
-                </div>
-                
-                <div class="navigation">
-                    <button class="prev-step" data-prev="7">← Назад</button>
-                    <button class="primary">Завершить сессию</button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer>
-        <div class="container">
-            LOKER GAME — платформа для фасилитации инсайт-сессий © 2023
         </div>
-    </footer>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // --- Этапы сессии ---
-            const steps = document.querySelectorAll('.step');
-            const stepContents = document.querySelectorAll('.step-content');
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = window.innerWidth < 768 ? 30 : 50;
             
-            // Обработчик для кнопок "Далее"
-            document.querySelectorAll('.next-step').forEach(button => {
-                button.addEventListener('click', function() {
-                    const nextStep = this.getAttribute('data-next');
-                    // Обновляем активный шаг
-                    steps.forEach(step => step.classList.remove('active'));
-                    document.querySelector(`.step[data-step="${nextStep}"]`).classList.add('active');
-                    // Обновляем активный контент
-                    stepContents.forEach(content => content.classList.remove('active'));
-                    document.getElementById(`step-${nextStep}`).classList.add('active');
-                });
-            });
-            // Обработчик для кнопок "Назад"
-            document.querySelectorAll('.prev-step').forEach(button => {
-                button.addEventListener('click', function() {
-                    const prevStep = this.getAttribute('data-prev');
-                    steps.forEach(step => step.classList.remove('active'));
-                    document.querySelector(`.step[data-step="${prevStep}"]`).classList.add('active');
-                    stepContents.forEach(content => content.classList.remove('active'));
-                    document.getElementById(`step-${prevStep}`).classList.add('active');
-                });
-            });
-            // Прямое переключение при клике на шаг
-            steps.forEach(step => {
-                step.addEventListener('click', function() {
-                    const stepNumber = this.getAttribute('data-step');
-                    steps.forEach(s => s.classList.remove('active'));
-                    this.classList.add('active');
-                    stepContents.forEach(content => content.classList.remove('active'));
-                    document.getElementById(`step-${stepNumber}`).classList.add('active');
-                });
-            });
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 5 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = '#a084ff';
+                particle.style.borderRadius = '50%';
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                // Начальная позиция
+                const posX = Math.random() * window.innerWidth;
+                const posY = Math.random() * window.innerHeight;
+                particle.style.left = posX + 'px';
+                particle.style.top = posY + 'px';
+                
+                // Анимация
+                const duration = Math.random() * 20 + 10;
+                particle.style.transition = `all ${duration}s linear`;
+                
+                container.appendChild(particle);
+                
+                // Движение частиц
+                setInterval(() => {
+                    const newX = posX + (Math.random() - 0.5) * 200;
+                    const newY = posY + (Math.random() - 0.5) * 200;
+                    particle.style.transform = `translate(${newX - posX}px, ${newY - posY}px)`;
+                }, duration * 1000);
+            }
+        }
+        
+        window.addEventListener('load', createParticles);
+        
+        function openModal() {
+            document.getElementById('gameModal').classList.add('show');
+        }
 
-            // --- Эффект шапки ---
-            const header = document.querySelector('header');
-            // Для десктопа — твой код:
-            window.addEventListener('scroll', function() {
-                if (!document.body.classList.contains('telegram-app')) {
-                    if (window.scrollY > 50) {
-                        header.classList.add('scrolled');
-                    } else {
-                        header.classList.remove('scrolled');
-                    }
-                }
-            });
-            // Для Telegram Mini App — скрытие шапки при скролле вниз, появление только в самом верху
-            if (document.body.classList.contains('telegram-app')) {
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY === 0) {
-                        header.classList.remove('header-hidden');
-                        header.classList.add('scrolled');
-                    } else {
-                        header.classList.add('header-hidden');
-                        header.classList.add('scrolled');
-                    }
-                });
+        function closeModal() {
+            document.getElementById('gameModal').classList.remove('show');
+        }
+
+        // Закрытие по клику вне окна
+        document.getElementById('gameModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('gameModal')) {
+                closeModal();
+            }
+        });
+
+        // Закрытие по ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
             }
         });
     </script>
 </body>
-</html> 
+</html>
