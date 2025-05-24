@@ -629,6 +629,72 @@
         body.telegram-app .card {
             background: rgba(37, 37, 41, 0.85);
         }
+
+        /* Кнопка свернуть */
+        .minimize-btn {
+            position: static;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 16px;
+            vertical-align: middle;
+            width: 36px;
+            height: 36px;
+            border: 2px solid #a084ff;
+            border-radius: 12px;
+            background: transparent;
+            box-shadow: 0 0 12px #a084ff88;
+            cursor: pointer;
+            transition: box-shadow 0.2s, border-color 0.2s;
+            padding: 0;
+        }
+        .minimize-btn:hover {
+            box-shadow: 0 0 24px #a084ffcc;
+            border-color: #fff;
+        }
+        .minimize-btn span {
+            display: block;
+            width: 18px;
+            height: 3px;
+            background: #fff;
+            border-radius: 2px;
+            margin-top: 2px;
+        }
+        /* Док с иконкой LIP */
+        #lip-dock {
+            position: fixed;
+            left: 50%;
+            bottom: 40px;
+            transform: translateX(-50%);
+            z-index: 2002;
+            display: none;
+        }
+        .lip-icon {
+            font-family: 'Jura', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            border: 2px solid #a084ff;
+            border-radius: 18px;
+            padding: 16px 44px;
+            background: rgba(24, 18, 43, 0.95);
+            box-shadow: 0 0 32px #a084ff88;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px #a084ff, 0 0 24px #a084ff;
+            cursor: pointer;
+            transition: box-shadow 0.3s, border-color 0.2s;
+            opacity: 0;
+            animation: none;
+        }
+        .lip-icon.show {
+            display: block;
+            opacity: 1;
+            animation: fadeInDock 0.5s;
+        }
+        @keyframes fadeInDock {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -650,7 +716,7 @@
         <section class="game-container glassmorphism">
             <div class="game-header">
                 <div class="game-title">Сессия: Поиск инсайтов команды</div>
-                <div class="session-info">Участников: 5 • Этап: 1/5</div>
+                <button class="minimize-btn" id="minimizeBtn"><span></span></button>
             </div>
 
             <div class="game-steps">
@@ -912,6 +978,10 @@
         </div>
     </footer>
 
+    <div id="lip-dock">
+        <div class="lip-icon" id="lipIcon">LIP</div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // --- Этапы сессии ---
@@ -976,6 +1046,30 @@
                 });
             }
         });
+
+        // --- СВЕРНУТЬ ---
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const lipDock = document.getElementById('lip-dock');
+        const lipIcon = document.getElementById('lipIcon');
+        const mainContent = document.body;
+        function hideGame() {
+            // document.querySelector('header').style.display = 'none';
+            document.querySelector('main').style.display = 'none';
+            document.querySelector('footer').style.display = 'none';
+            minimizeBtn.style.display = 'none';
+            lipDock.style.display = 'block';
+            setTimeout(() => lipIcon.classList.add('show'), 10);
+        }
+        function showGame() {
+            // document.querySelector('header').style.display = '';
+            document.querySelector('main').style.display = '';
+            document.querySelector('footer').style.display = '';
+            minimizeBtn.style.display = '';
+            lipIcon.classList.remove('show');
+            setTimeout(() => lipDock.style.display = 'none', 300);
+        }
+        minimizeBtn.addEventListener('click', hideGame);
+        lipIcon.addEventListener('click', showGame);
     </script>
 </body>
 </html> 
