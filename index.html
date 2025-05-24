@@ -41,7 +41,7 @@
             color: #a084ff;
             font-weight: 300;
             letter-spacing: 1px;
-        }
+            }
         .main-offer {
             flex: 1;
             display: flex;
@@ -241,8 +241,8 @@
     
     <div class="header">
         <div class="logo">IS REAL</div>
-    </div>
-    
+            </div>
+
     <div class="main-offer">
         <h1 class="offer-title">Решай реальные проблемы,<br>получая кайф</h1>
         
@@ -250,14 +250,14 @@
             <span class="pulse">✨</span> Коллективный разум  команды против любой проблемы.<br>
             <span class="pulse">🚀</span> Игра, которая превращает мозговой штурм в синергию.<br>
             <span class="pulse">💡</span> Инсайты, которые вы найдёте не знает даже chat GPT.
-        </div>
-        
+                    </div>
+                    
         <div class="buttons">
             <a href="https://insight1010.github.io/isreal/game.html" class="btn btn-main">Начать игру</a>
             <button class="btn btn-how" onclick="openModal()">Как играть</button>
-        </div>
-    </div>
-
+                    </div>
+                </div>
+                
     <!-- Модальное окно -->
     <div id="gameModal" class="modal-overlay">
         <div class="modal-content">
@@ -276,7 +276,7 @@
                         <li>Участники: 4-12 человек + ведущий</li>
                     </ul>
                 </div>
-
+                
                 <div class="game-section">
                     <h3>Этапы игры</h3>
                     <ol>
@@ -286,7 +286,7 @@
                         <li>Совершение реального действия</li>
                     </ol>
                 </div>
-
+                
                 <div class="game-section">
                     <h3>Ключевые понятия</h3>
                     <div class="concept-grid">
@@ -297,11 +297,11 @@
                         <div class="concept-card">
                             <div class="concept-title">Инсайт</div>
                             <div class="concept-desc">Неочевидное решение, оригинальный взгляд</div>
-                        </div>
+                </div>
                         <div class="concept-card">
                             <div class="concept-title">Потенциал</div>
                             <div class="concept-desc">Реализация инсайта, благодарность за проблему</div>
-                        </div>
+            </div>
                         <div class="concept-card">
                             <div class="concept-title">Действие</div>
                             <div class="concept-desc">Конкретный шаг для проверки инсайта</div>
@@ -309,6 +309,24 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Док для иконки приложения -->
+    <div id="app-dock" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:2000;display:none;">
+        <div id="lip-icon" style="background:linear-gradient(90deg,#a084ff 0%,#7f5cff 100%);box-shadow:0 0 32px #a084ff88; border-radius:18px;padding:18px 36px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:box-shadow 0.3s;">
+            <span style="font-family:'Jura',sans-serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:2px;text-shadow:0 0 12px #a084ff,0 0 24px #a084ff;">LIP</span>
+            <span style="font-size:14px;color:#e0ccff;opacity:0.7;">локер • инсайт • потенциал</span>
+        </div>
+    </div>
+
+    <!-- Окно приложения (игра) -->
+    <div id="app-window" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1500;background:rgba(0,0,0,0.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+        <div style="position:relative;max-width:1100px;width:96vw;max-height:92vh;overflow:auto;background:#18122b;border-radius:24px;box-shadow:0 0 64px #a084ff55,0 0 0 2px #a084ff44;padding:0 0 32px 0;">
+            <!-- Кнопка свернуть -->
+            <button id="minimize-app" style="position:absolute;top:18px;right:18px;background:linear-gradient(90deg,#a084ff 0%,#7f5cff 100%);color:#fff;border:none;border-radius:50%;width:38px;height:38px;font-size:22px;box-shadow:0 0 16px #a084ff88;cursor:pointer;transition:background 0.2s;">↓</button>
+            <!-- Контент игры вставлю ниже -->
+            <div id="game-content"></div>
         </div>
     </div>
 
@@ -337,7 +355,7 @@
                 particle.style.transition = `all ${duration}s linear`;
                 
                 container.appendChild(particle);
-                
+
                 // Движение частиц
                 setInterval(() => {
                     const newX = posX + (Math.random() - 0.5) * 200;
@@ -348,7 +366,7 @@
         }
         
         window.addEventListener('load', createParticles);
-        
+
         function openModal() {
             document.getElementById('gameModal').classList.add('show');
         }
@@ -369,6 +387,33 @@
             if (e.key === 'Escape') {
                 closeModal();
             }
+        });
+
+        // --- Открытие окна приложения ---
+        document.querySelector('.btn-main').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('app-window').style.display = 'flex';
+            document.getElementById('app-dock').style.display = 'none';
+        });
+        // --- Свернуть окно ---
+        document.getElementById('minimize-app').addEventListener('click', function() {
+            document.getElementById('app-window').style.display = 'none';
+            document.getElementById('app-dock').style.display = 'block';
+        });
+        // --- Развернуть окно по клику на иконку ---
+        document.getElementById('lip-icon').addEventListener('click', function() {
+            document.getElementById('app-window').style.display = 'flex';
+            document.getElementById('app-dock').style.display = 'none';
+        });
+        // --- Вставляю контент игры внутрь окна ---
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('game.html')
+                .then(r => r.text())
+                .then(html => {
+                    // Вырезаем только <main>...</main> из game.html
+                    const mainMatch = html.match(/<main[\s\S]*?<\/main>/);
+                    document.getElementById('game-content').innerHTML = mainMatch ? mainMatch[0] : '<div style="color:#fff">Ошибка загрузки игры</div>';
+                });
         });
     </script>
 </body>
