@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sci-Fi HUD Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jura:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at 50% 30%, #181e2b 60%, #0a0c18 100%);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hud-modal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 1000;
+      background: rgba(10,12,24,0.98);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.7s cubic-bezier(.4,2,.6,1) both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .hud-window {
+      position: relative;
+      width: 760px;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+    }
+    .hud-svg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hud-content {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+    .hud-terminal {
+      background: linear-gradient(135deg, rgba(20,24,40,0.92) 80%, rgba(0,234,255,0.08) 100%);
+      border-radius: 18px;
+      box-shadow: 0 0 32px #00eaff33, 0 0 0 2px #00eaff44 inset;
+      width: 360px;
+      height: 240px;
+      margin-right: 36px;
+      display: flex;
+      align-items: flex-end;
+      padding: 36px 28px;
+      font-family: 'Jura', monospace;
+      font-size: 22px;
+      color: #00eaff;
+      letter-spacing: 1.5px;
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(4px);
+    }
+    .hud-terminal-text {
+      min-height: 40px;
+      white-space: pre-line;
+      word-break: break-word;
+      animation: typing 2.5s steps(40, end) 1;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    .hud-side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+    .hud-indicator {
+      font-family: 'Jura', monospace;
+      font-size: 16px;
+      color: #3a7cff;
+      background: rgba(0,234,255,0.08);
+      border-radius: 8px;
+      padding: 8px 22px;
+      box-shadow: 0 0 8px #00eaff22;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+      border: 1.5px solid #00eaff44;
+      text-shadow: 0 0 8px #00eaff99;
+      position: relative;
+      overflow: hidden;
+    }
+    .hud-indicator::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, #00eaff22 0%, #3a7cff11 100%);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .hud-close {
+      position: absolute;
+      top: 18px;
+      right: 28px;
+      z-index: 10;
+      font-size: 32px;
+      color: #00eaff;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s;
+      font-family: 'Jura', monospace;
+      filter: drop-shadow(0 0 8px #00eaff);
+    }
+    .hud-close:hover {
+      color: #fff;
+    }
+    .hud-hex {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      z-index: 0;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .hud-glow {
+      filter: blur(8px) brightness(1.5);
+      opacity: 0.5;
+    }
+    @media (max-width: 900px) {
+      .hud-window { width: 98vw; height: 60vw; min-width: 320px; min-height: 220px; }
+      .hud-terminal { width: 48vw; min-width: 180px; height: 28vw; min-height: 120px; font-size: 14px; padding: 18px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hud-modal" id="hudModal">
+    <div class="hud-window">
+      <svg class="hud-svg" width="760" height="480" viewBox="0 0 760 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#00eaff" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#181e2b" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Внешняя рамка -->
+        <rect x="10" y="10" width="740" height="460" rx="36" fill="#181e2b" stroke="#3a7cff" stroke-width="2.5"/>
+        <!-- Внутренняя рамка -->
+        <rect x="38" y="38" width="684" height="404" rx="28" stroke="#00eaff" stroke-width="1.5" fill="none"/>
+        <!-- Гексагональная сетка -->
+        <g class="hud-hex">
+          <polygon points="380,120 420,160 420,220 380,260 340,220 340,160" stroke="#00eaff" stroke-width="1.2" fill="none"/>
+          <polygon points="380,180 400,200 380,220 360,200" stroke="#3a7cff" stroke-width="1" fill="none"/>
+        </g>
+        <!-- Светящиеся круги -->
+        <circle cx="380" cy="240" r="120" stroke="#3a7cff" stroke-width="1.5" fill="none"/>
+        <circle cx="380" cy="240" r="80" stroke="#00eaff" stroke-width="1" fill="none"/>
+        <circle cx="380" cy="240" r="40" stroke="#00eaff" stroke-width="0.7" fill="none"/>
+        <!-- Glow -->
+        <ellipse class="hud-glow" cx="380" cy="240" rx="120" ry="40" fill="url(#glow)"/>
+        <!-- Угловые элементы -->
+        <polyline points="10,60 38,38 60,10" stroke="#00eaff" stroke-width="2" fill="none"/>
+        <polyline points="750,60 722,38 700,10" stroke="#00eaff" stroke-width="2" fill="none"/>
+        <polyline points="10,420 38,442 60,470" stroke="#00eaff" stroke-width="2" fill="none"/>
+        <polyline points="750,420 722,442 700,470" stroke="#00eaff" stroke-width="2" fill="none"/>
+        <!-- Сканирующая линия -->
+        <rect x="120" y="230" width="520" height="2" fill="#00eaff" opacity="0.18">
+          <animate attributeName="x" values="120;600;120" dur="2.5s" repeatCount="indefinite"/>
+        </rect>
+      </svg>
+      <div class="hud-content">
+        <div class="hud-terminal">
+          <div class="hud-terminal-text" id="hudTerminalText"></div>
+        </div>
+        <div class="hud-side-panel">
+          <div class="hud-indicator">● ONLINE</div>
+          <div class="hud-indicator">▲ ENERGY: 98%</div>
+          <div class="hud-indicator">■ STATUS: ACTIVE</div>
+        </div>
+      </div>
+      <button class="hud-close" id="hudCloseBtn">×</button>
+    </div>
+  </div>
+  <script>
+    // Открытие HUD (можно заменить на клик по LIP)
+    document.getElementById('hudModal').style.display = 'flex';
+    setTimeout(() => {
+      document.getElementById('hudTerminalText').textContent = '';
+      typeTerminalText('Добро пожаловать в LIP\n\n> Введите команду или выберите действие...');
+    }, 200);
+    // Закрытие HUD
+    document.getElementById('hudCloseBtn').addEventListener('click', function() {
+      document.getElementById('hudModal').style.display = 'none';
+    });
+    // Эффект печатающегося текста
+    function typeTerminalText(text) {
+      let i = 0;
+      const el = document.getElementById('hudTerminalText');
+      function type() {
+        if (i <= text.length) {
+          el.textContent = text.slice(0, i);
+          i++;
+          setTimeout(type, 28);
+        }
+      }
+      type();
+    }
+  </script>
+</body>
+</html>
